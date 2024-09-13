@@ -7,15 +7,18 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 
-import { Task } from './entity/task.entity';
-import { CreateTaskDto } from './dto/create-task-dto';
-import { UpdateTaskStatusDto } from './dto/update-task-status-dto';
-import { GetTaskFilterDto } from './dto/get-task-filter-dto';
+import { Task } from 'src/entity/task.entity';
+import { GetTaskFilterDto } from 'src/dto/get-task-filter-dto';
+import { CreateTaskDto } from 'src/dto/create-task-dto';
+import { UpdateTaskStatusDto } from 'src/dto/update-task-status-dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('tasks')
+@UseGuards(AuthGuard())
 export class TasksController {
   constructor(private tasksService: TasksService) {
     this.tasksService = tasksService;
@@ -30,6 +33,7 @@ export class TasksController {
   }
   @Post()
   async createTask(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
+    console.log('Inside Create Task');
     return await this.tasksService.createTask(createTaskDto);
   }
   @Delete('/:id')
