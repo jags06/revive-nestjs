@@ -21,6 +21,7 @@ lerna-debug.log*
 # IDEs and editors
 /.idea
 .project
+.husky/
 .classpath
 .c9/
 *.launch
