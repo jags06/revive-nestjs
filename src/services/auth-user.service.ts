@@ -4,19 +4,22 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AuthCredentialsDto } from 'src/dto/auth-credentials.dto';
-import { User } from 'src/entity/user.entity';
-import { UserRepository } from 'src/repository/user.repository';
+import { AuthUserCredentialsDto } from '../dto/auth-credentials.dto';
+import { AuthUser } from '../entity/auth-user.entity';
+import { AuthUserRepository } from '../repository/auth-user.repository';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { JWTPayload } from './jwt.payload.interface';
+import { JWTPayload } from '../auth-user/jwt-payload.interface';
+import { CustomLoggerService } from './logger-service';
 @Injectable()
-export class AuthService {
+export class AuthUserService {
   constructor(
-    @InjectRepository(User) private readonly userRepository: UserRepository,
+    @InjectRepository(AuthUser)
+    private readonly userRepository: AuthUserRepository,
     private jwtService: JwtService,
+    private logger: CustomLoggerService,
   ) {}
-  async createUser(authCredentialDto: AuthCredentialsDto): Promise<void> {
+  async createUser(authCredentialDto: AuthUserCredentialsDto): Promise<void> {
     const { username, password } = authCredentialDto;
     // hash password
     const salt = await bcrypt.genSalt();
@@ -33,16 +36,15 @@ export class AuthService {
       // throw new HttpException(`Username exist "${error}"`, HttpStatus.CONFLICT);
     }
   }
-  async signUp(authCredentialDto: AuthCredentialsDto): Promise<void> {
+  async signUp(authCredentialDto: AuthUserCredentialsDto): Promise<void> {
     return this.createUser(authCredentialDto);
   }
 
   async signIn(
-    authCredentialDto: AuthCredentialsDto,
+    authCredentialDto: AuthUserCredentialsDto,
   ): Promise<{ accessToken: string }> {
     const { username, password } = authCredentialDto;
     const user = await this.userRepository.findOneBy({ username });
-    console.log('printing user', user);
     if (user && (await bcrypt.compare(password, user.password))) {
       const payload: JWTPayload = { username };
       const accessToken: string = this.jwtService.sign(payload);

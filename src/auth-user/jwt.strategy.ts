@@ -2,24 +2,26 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { User } from 'src/entity/user.entity';
-import { UserRepository } from 'src/repository/user.repository';
-import { JWTPayload } from './jwt.payload.interface';
+import { AuthUser } from '../entity/auth-user.entity';
+import { AuthUserRepository } from '../repository/auth-user.repository';
+import { JWTPayload } from './jwt-payload.interface';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    @InjectRepository(User) private readonly userRepository: UserRepository,
+    @InjectRepository(AuthUser)
+    private readonly userRepository: AuthUserRepository,
+    private configService: ConfigService,
   ) {
     super({
-      secretOrKey: 'topSecret 51',
+      secretOrKey: configService.get('JWT_SECRET'),
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     });
   }
   async validate(payload: JWTPayload) {
     const { username } = payload;
-    console.log('Checking user');
-    const user: User = await this.userRepository.findOneBy({ username });
+    const user: AuthUser = await this.userRepository.findOneBy({ username });
     if (!user) {
       throw new UnauthorizedException('Please check your login credentials');
     }

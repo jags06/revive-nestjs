@@ -16,8 +16,30 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@/*": ["src/*"],
+      "@test/*": ["test/*"],
+      "@config/*": ["config/*"],
+      "@utils/*": ["utils/*"],
+      "@models/*": ["models/*"],
+      "@services/*": ["services/*"],
+      "@controllers/*": ["controllers/*"],
+      "@middlewares/*": ["middlewares/*"],
+      "@interfaces/*": ["interfaces/*"],
+      "@types/*": ["types/*"],
+      "@errors/*": ["errors/*"],
+      "@constants/*": ["constants/*"],
+      "@database/*": ["database/*"],
+      "@validations/*": ["validations/*"],
+      "@routes/*": ["routes/*"],
+      "@repositories/*": ["repositories/*"],
+      "@migrations/*": ["migrations/*"],
+      "@seeds/*": ["seeds/*"],
+      "@factories/*": ["factories/*"],
+      "@fixtures/*": ["fixtures/*"]
+    }
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "test/**/*"],
   "exclude": ["node_modules"]
 }
