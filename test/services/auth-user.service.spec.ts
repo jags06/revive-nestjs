@@ -1,10 +1,11 @@
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { AuthUserService } from '../../src/auth/auth-user.service';
-import { AuthUser } from '../../src/entity/auth-user.entity';
-import { JwtService } from '@nestjs/jwt';
 import { AuthUserCredentialsDto } from '../../src/dto/auth-credentials.dto';
+import { AuthUser } from '../../src/entity/auth-user.entity';
+import { AuthUserService } from '../../src/services/auth-user.service';
+import { JwtService } from '@nestjs/jwt';
+import { CustomLoggerService } from '../../src/services/logger-service';
 
 describe('AuthUserService', () => {
   let authUserService: AuthUserService;
@@ -21,6 +22,14 @@ describe('AuthUserService', () => {
             create: jest.fn(),
             save: jest.fn(),
             findOneBy: jest.fn(),
+          },
+        },
+        {
+          provide: CustomLoggerService,
+          useValue: {
+            log: jest.fn(),
+            error: jest.fn(),
+            warn: jest.fn(),
           },
         },
         {

@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common';
-import { TasksModule } from './tasks/tasks.module';
+import { TasksModule } from './modules/tasks.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from './auth/auth-user.module';
+import { AuthModule } from './modules/auth-user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { dbConfigSchema } from './config.schema';
+import { LoggerModule } from './modules/logger.module';
 
 @Module({
   imports: [
+    LoggerModule,
     ConfigModule.forRoot({
       envFilePath: [`.env.stage.${process.env.STAGE}`],
       validationSchema: dbConfigSchema,

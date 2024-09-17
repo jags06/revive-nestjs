@@ -1,11 +1,12 @@
 import { Test } from '@nestjs/testing';
-import { TasksService } from '../../src/tasks/tasks.service';
-import { Task } from '../../src/entity/task.entity';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuthUser } from '../../src/entity/auth-user.entity';
 import { TaskStatus } from '../../src/tasks/task-status-enum';
 import { CreateTaskDto } from '../../src/dto/create-task-dto';
+import { TasksService } from '../../src/services/tasks.service';
+import { Task } from '../../src/entity/task.entity';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { CustomLoggerService } from '../../src/services/logger-service';
 
 describe('TasksService', () => {
   let service: TasksService;
@@ -22,6 +23,14 @@ describe('TasksService', () => {
             create: jest.fn(),
             save: jest.fn(),
             findOne: jest.fn(),
+          },
+        },
+        {
+          provide: CustomLoggerService,
+          useValue: {
+            log: jest.fn(),
+            error: jest.fn(),
+            warn: jest.fn(),
           },
         },
       ],

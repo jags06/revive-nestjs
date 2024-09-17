@@ -1,18 +1,24 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { TaskRepository } from '../repository/task.repository';
 import { InjectRepository } from '@nestjs/typeorm';
-import { TaskStatus } from './task-status-enum';
 import { Task } from '../entity/task.entity';
 import { CreateTaskDto } from '../dto/create-task-dto';
 import { GetTaskFilterDto } from '../dto/get-task-filter-dto';
 import { AuthUser } from '../entity/auth-user.entity';
+import { TaskStatus } from '../tasks/task-status-enum';
+import { CustomLoggerService } from './logger-service';
 
 @Injectable()
 export class TasksService {
-  private logger = new Logger('TasksService', { timestamp: true });
-  constructor(@InjectRepository(Task) private taskRepository: TaskRepository) {}
+  constructor(
+    @InjectRepository(Task) private taskRepository: TaskRepository,
+    private readonly logger: CustomLoggerService,
+  ) {}
 
   async getTasks(filterDto: GetTaskFilterDto, user: AuthUser): Promise<Task[]> {
+    this.logger.log(
+      `User "${user.username}" retrieving all tasks. Filters: ${JSON.stringify(filterDto)}`,
+    );
     const { status, search } = filterDto;
     const query = this.taskRepository.createQueryBuilder('task');
     query.where({ user });

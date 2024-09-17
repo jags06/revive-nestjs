@@ -3,31 +3,31 @@ import {
   Controller,
   Delete,
   Get,
-  Logger,
   Param,
   Patch,
   Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { TasksService } from './tasks.service';
 
 import { Task } from '../entity/task.entity';
 import { GetTaskFilterDto } from '../dto/get-task-filter-dto';
 import { CreateTaskDto } from '../dto/create-task-dto';
 import { UpdateTaskStatusDto } from '../dto/update-task-status-dto';
 import { AuthGuard } from '@nestjs/passport';
-import { GetUser } from '../auth/get-user.decorator';
+import { GetUser } from '../auth-user/get-user.decorator';
 import { AuthUser } from '../entity/auth-user.entity';
 import { ConfigService } from '@nestjs/config';
+import { TasksService } from '../services/tasks.service';
+import { CustomLoggerService } from '../services/logger-service';
 
 @Controller('tasks')
-@UseGuards(AuthGuard())
+@UseGuards(AuthGuard('jwt'))
 export class TasksController {
-  private logger = new Logger('TasksController');
   constructor(
     private tasksService: TasksService,
     private configService: ConfigService,
+    private readonly logger: CustomLoggerService,
   ) {
     this.tasksService = tasksService;
   }
@@ -36,9 +36,6 @@ export class TasksController {
     @Query() filterDto: GetTaskFilterDto,
     @GetUser() user: AuthUser,
   ): Promise<Task[]> {
-    this.logger.verbose(
-      `User "${user.username}" retrieving all tasks. Filters: ${JSON.stringify(filterDto)}`,
-    );
     return this.tasksService.getTasks(filterDto, user);
   }
   @Get('/:id')

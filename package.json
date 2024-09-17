@@ -73,6 +73,7 @@
       "json",
       "ts"
     ],
+  
     "roots": [
       "<rootDir>/src/",
       "<rootDir>/test/"
